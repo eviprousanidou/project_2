@@ -4,7 +4,7 @@
 ## Reporting Findings
   <br>
 1. **(3 points)** Implement the `exact_F2` function. The function accepts an RDD of strings as an input. The output should be exactly `F2 = sum(Fs^2)`, where `Fs` is the number of occurrences of plate `s` and the sum is taken over all plates. This can be achieved in one line using the `map` and `reduceByKey` methods of the RDD class. Run `exact_F2` locally **and** on GCP with 1 driver and 4 machines having 2 x N1 cores. Copy the results to your report. Terminate the program if it runs for longer than 30 minutes.
-<br>
+<br><br>
 Locally : Time = 106 , Estimate = 8362719495
 
 GCP : Time = 98  , Estimate = 8362719495
