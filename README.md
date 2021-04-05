@@ -42,9 +42,9 @@ GCP : Time = 79 , Estimate = 8035874
 
 BJKST : Time = 79, Estimate = 8035874
 
-exact F0 : Time = 94, Estimate = 7406649
+exact F0 : Time = 94, Estimate = 7937821
 
-
+<br>
 
 Tug-Of-War : Time = 92, Estimate = 6783273928
 
