@@ -22,29 +22,33 @@ You'll be submitting a report along with your code that provides commentary on t
 
 Locally : Time = 94 , Estimate = 8567966130
 
-GCP : Time = 71  , Estimate = 8567966130
+GCP : Time = 92  , Estimate = 8567966130
 
 
 2. **(3 points)** Implement the `Tug_of_War` function. The function accepts an RDD of strings, a parameter `width`, and a parameter `depth` as inputs. It should run `width * depth` Tug-of-War sketches, group the outcomes into groups of size `width`, compute the means of each group, and then return the median of the `depth` means in approximating F2. A 4-universal hash function class `four_universal_Radamacher_hash_function`, which generates a hash function from a 4-universal family, has been provided for you. The generated function `hash(s: String)` will hash a string to 1 or -1, each with a probability of 50%. Once you've implemented the function, set `width` to 10 and `depth` to 3. Run `Tug_of_War` locally **and** on GCP with 1 driver and 4 machines having 2 x N1 cores. Copy the results to your report. Terminate the program if it runs for longer than 30 minutes. **Please note** that the algorithm won't be significantly faster than `exact_F2` since the number of different cars is not large enough for the memory to become a bottleneck. Additionally, computing `width * depth` hash values of the license plate strings requires considerable overhead. That being said, executing with `width = 1` and `depth = 1` should generally still be faster.
 
-Locally : Time = 289  , Estimate = 5943328935
+Locally : Time = 128  , Estimate = 5943328935
 
-GCP : Time = 205  , Estimate = 6783273928
+GCP : Time = 98  , Estimate = 6783273928
 
 3. **(3 points)** Implement the `BJKST` function. The function accepts an RDD of strings, a parameter `width`, and a parameter `trials` as inputs. `width` denotes the maximum bucket size of each sketch. The function should run `trials` sketches and return the median of the estimates of the sketches. A template of the `BJKSTSketch` class is also included in the sample code. You are welcome to finish its methods and apply that class or write your own class from scratch. A 2-universal hash function class `hash_function(numBuckets_in: Long)` has also been provided and will hash a string to an integer in the range `[0, numBuckets_in - 1]`. Once you've implemented the function, determine the smallest `width` required in order to achieve an error of +/- 20% on your estimate. Keeping `width` at that value, set `depth` to 5. Run `BJKST` locally **and** on GCP with 1 driver and 4 machines having 2 x N1 cores. Copy the results to your report. Terminate the program if it runs for longer than 30 minutes.
 
 Locally : Time = 112, Estimate = 7854672
 
-GCP : Time = 73 , Estimate = 8035874
+GCP : Time = 94 , Estimate = 8035874
 
 
 4. **(1 point)** Compare the BJKST algorithm to the exact F0 algorithm and the tug-of-war algorithm to the exact F2 algorithm. Summarize your findings.
 
-BJKST : Time = 73, Estimate = 8035874
+BJKST : Time = 94, Estimate = 8035874
+
 F0 : Time = 79, Estimate = 7406649
 
-Tug-Of-War : Time = , Estimate = 
-F2 : Time = 72 , Estimate = 8567966130
+
+
+Tug-Of-War : Time = 98, Estimate = 6783273928
+
+F2 : Time = 92 , Estimate = 8567966130
 
 Both BJKST and Tug-Of-War seem to decrease the time elapsed when compared to F0 and F2 respectivelly. But we see that BJKST reduced the time singificanlty more when compared to F0, that the decrease in time that we see in Tug-Of-War when comparing it to F2.
 
