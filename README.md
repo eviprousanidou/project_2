@@ -49,6 +49,7 @@ exact F0 : Time = 94, Estimate = 7937821
 Tug-Of-War : Time = 92, Estimate = 6783273928
 
 exact F2 : Time = 98 , Estimate = 8362719495
+<br>
 
 Both BJKST and Tug-Of-War seem to decrease the time elapsed when compared to F0 and F2 respectivelly. But we see that BJKST reduced the time singificanlty more when compared to F0, than the decrease in time that we see in Tug-Of-War when comparing it to F2.
 
