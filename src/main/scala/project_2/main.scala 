@@ -4,13 +4,12 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 import org.apache.spark.rdd._
 
-
 object main{
 
   val seed = new java.util.Date().hashCode;
   val rand = new scala.util.Random(seed);
 
-  class hash_function(numBuckets_in: Long) extends Serializable {  // a 2-universal hash family, numBuckets_in is the numer of buckets
+  class hash_function(numBuckets_in: Long) extends Serializable {  // a 2-universal hash family, numBuckets_in is the number of buckets
     val p: Long = 2147483587;  // p is a prime around 2^31 so the computation will fit into 2^63 (Long)
     val a: Long = (rand.nextLong %(p-1)) + 1  // a is a random number is [1,p]
     val b: Long = (rand.nextLong % p) // b is a random number in [0,p]
@@ -43,7 +42,7 @@ object main{
     }
   }
 
-  class four_universal_Radamacher_hash_function extends hash_function(2) {  // a 4-universal hash family, numBuckets_in is the numer of buckets
+  class four_universal_Radamacher_hash_function extends hash_function(2) {  // a 4-universal hash family, numBuckets_in is the number of buckets
     override val a: Long = (rand.nextLong % p)   // a is a random number is [0,p]
     override val b: Long = (rand.nextLong % p) // b is a random number in [0,p]
     val c: Long = (rand.nextLong % p)   // c is a random number is [0,p]
@@ -64,7 +63,7 @@ object main{
   }
 
   class BJKSTSketch(bucket_in: Set[(String, Int)] ,  z_in: Int, bucket_size_in: Int) extends Serializable {
-/* A constructor that requies intialize the bucket and the z value. The bucket size is the bucket size of the sketch. */
+/* A constructor that requires initialize the bucket and the z value. The bucket size is the bucket size of the sketch. */
 
     var bucket: Set[(String, Int)] = bucket_in
     var z: Int = z_in
@@ -78,9 +77,38 @@ object main{
 
     def +(that: BJKSTSketch): BJKSTSketch = {    /* Merging two sketches */
 
+	// kainourgios kodikas
+
+	bucket = this.bucket union that.bucket
+      	z = scala.math.max(this.z, that.z)
+
+      	while(bucket.size >= bucket_size_in){
+
+        	z = z + 1
+        	bucket = bucket.filter(s=> s._2 >= z)
+      }
+      return this
     }
 
     def add_string(s: String, z_of_s: Int): BJKSTSketch = {   /* add a string to the sketch */
+
+	// kainourgios kodikas
+
+	if (z_of_s >= z) {
+
+		var m = Set((s, z_of_s))
+
+       		bucket = bucket union m
+
+        	while(bucket.size >= bucket_size_in) {
+
+          		z = z + 1
+
+          		bucket = bucket.filter(s=> {s._2 >= z})
+        	}
+      	}
+
+      	return this
 
     }
   }
@@ -101,11 +129,42 @@ object main{
 
   def BJKST(x: RDD[String], width: Int, trials: Int) : Double = {
 
+	// kainourgios kodikas
+
+	val h = Seq.fill(trials)(new hash_function(2000000000))
+    	    
+    def p0 = (accu1: Seq[BJKSTSketch], accu2: Seq[BJKSTSketch]) => Seq.range(0,trials).map(i => (accu1(i) + accu2(i)))
+
+    def p1 = (accu1: Seq[BJKSTSketch], s: String) => Seq.range(0,trials).map(i => accu1(i).add_string(s, h(i).zeroes(h(i).hash(s))))
+
+    val x3 = x.aggregate(Seq.fill(trials)(new BJKSTSketch("dum", 0, width)))( p1, p0)
+    
+	//Median
+    return ans = x3.map(sk => scala.math.pow(2,sk.z.toDouble)*sk.bucket.size).sortWith(_ < _)( trials/2) 
+
   }
 
 
   def Tug_of_War(x: RDD[String], width: Int, depth:Int) : Long = {
 
+	// kainourgios kodikas
+
+	var a: Long = 0
+
+  	val h: four_universal_Radamacher_hash_function = new four_universal_Radamacher_hash_function()
+
+  	a = x.map(x => h.hash(x)).reduce(_+_)
+  	
+	val sketch = scala.math.pow(a,2)
+
+	val sk = Seq.fill(width * depth)(sketch)
+
+  	val average = sk(width).map(_.sum/width).toArray 
+
+	//median
+  	val ans = average.sortWith(_ < _).drop(average.length/2).head
+	
+	return ans
   }
 
 
@@ -116,6 +175,11 @@ object main{
 
 
   def exact_F2(x: RDD[String]) : Long = {
+
+	// kainourgios kodikas
+
+	val ans = x.map(x => (x, 1)).reduceByKey(_+_).map(g => g._2*g._2).sum
+	return ans
 
   }
 
